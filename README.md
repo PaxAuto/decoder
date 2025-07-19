@@ -26,7 +26,7 @@ graph LR
     end
 
     %% Component
-    EM["component"]:::cyanEllipse
+    EM["decoder"]:::cyanEllipse
 
     %% Connections
     EVSEAL --> EM
@@ -62,9 +62,9 @@ graph LR
 ### Topics:
 | Name                         | IO      | Type                 | Description                                                              |
 |------------------------------|---------|----------------------|--------------------------------------------------------------------------|
-| `/cam`        | Input   | `std_msgs/String`      |   Receives Cooperative Awareness Messages (CAM) with data on nearby vehicles             |
-| `/spatem`         | Input   | `std_msgs/String`      |  Receives Signal Phase and Timing (SPATEM) messages from traffic lights                  |
-| `/cpm`              | Input   | `std_msgs/String`      | Receives Collective Perception Messages (CPM) indicating emergencies, parking    |
+| `/cam`        | Input   | `v2x_msgs/msg/CAM.msg`      |   Receives Cooperative Awareness Messages (CAM) with data on nearby vehicles             |
+| `/spatem`         | Input   | `v2x_msgs/msg/SPATEM.msg`      |  Receives Signal Phase and Timing (SPATEM) messages from traffic lights                  |
+| `/cpm`              | Input   | `v2x_msgs/msg/CPM.msg`      | Receives Collective Perception Messages (CPM) indicating emergencies, parking    |
 | `/decoder_Info`           | Output  | `custom_msg/msg/decoder_Info`      |       Publishes structured decoded V2X data               |
                   |
 
@@ -80,27 +80,16 @@ graph LR
 | `parking_slot_ids`     | `string[]`         | Identifiers of available or suggested parking slots                            |
 
 ### Interface test process:
-Process for testing the above interfaces an be found [here](https://git.hs-coburg.de/pax_auto/m3_components/src/branch/main/1_component_template/interface_test.md).
+Will be implemented in next Module.
 
-## 🎯 User Stories & Acceptance Criteria
-### Heading
-**User Story x.x**  
-_As a Decoder component, I want to receive real-time V2X messages (CAM, SPATEM, CPM) from other vehicles and infrastructure, so that I can decode the data and make it available to other onboard modules.
+## 🎯 User Stories
+Will be created in next Module
  
-**Acceptance Criteria**  
-- **x.x.1** The Decoder shall subscribe to `/cam`, `/spatem`, and `/cpm` topics and update the corresponding fields: `nearby_vehicles` and `nearby_pedestrians` from `/cam`, `traffic_signal_status` from `/spatem`, and `emergency_events` and `parking_slot_ids` from `/cpm`.  
-- **x.x.2**  The Decoder shall create a DecoderInfo message with a valid `header.stamp` and publish it to `/decoder_info`.
-
 ## 🛠️ Installation
-```bash
-git clone xx.git
-```
+ROS2 package will be implemented in next Module.
 
 ## ▶️ Usage
-Run the node:
-```bash
-ros2 run xx xx
-```
+ROS2 package will be implemented in next Module.
 
 ## 🧑‍💻 Contributor
 [Mahitha Balachandran Sheeja](https://git.hs-coburg.de/mah5338s)
