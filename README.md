@@ -66,7 +66,6 @@ graph LR
 | `/spatem`         | Input   | `v2x_msgs/msg/SPATEM.msg`      |  Receives Signal Phase and Timing (SPATEM) messages from traffic lights                  |
 | `/cpm`              | Input   | `v2x_msgs/msg/CPM.msg`      | Receives Collective Perception Messages (CPM) indicating emergencies, parking    |
 | `/decoder_Info`           | Output  | `custom_msg/msg/decoder_Info.msg`      |       Publishes structured decoded V2X data               |
-                  |
 
 ### Custom messages:
 #### Message: `decoder_Info.msg`
