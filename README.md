@@ -6,7 +6,7 @@
 - [Description](#-description)
 - [Architecture](#-architecture)
 - [Interfaces](#-interfaces)
-- [User Stories & Acceptance Criteria](#-user-stories--acceptance-criteria)
+- [User Stories](#-user-stories)
 - [Installation](#-installation)
 - [Usage](#-usage)
 - [Contributor](#-contributor)
@@ -20,9 +20,9 @@ The Decoder component processes raw V2X messages and converts them into structur
 graph LR
     %% Input Topics
     subgraph Input topics
-        EVSEAL["/CAM"]:::grayEllipse
-        MS["/SPATEM"]:::grayEllipse
-        VCU["/CPM"]:::grayEllipse
+        EVSEAL["/cam"]:::grayEllipse
+        MS["/spatem"]:::grayEllipse
+        VCU["/cpm"]:::grayEllipse
     end
 
     %% Component
@@ -36,7 +36,7 @@ graph LR
 
     %% Output Topics
     subgraph Output topics
-        DC["/decoder_Info"]:::grayEllipse
+        DC["/decoder_info"]:::grayEllipse
     end
 
     %% Ellipse shape styling
@@ -65,7 +65,7 @@ graph LR
 | `/cam`        | Input   | `v2x_msgs/msg/CAM.msg`      |   Receives Cooperative Awareness Messages (CAM) with data on nearby vehicles             |
 | `/spatem`         | Input   | `v2x_msgs/msg/SPATEM.msg`      |  Receives Signal Phase and Timing (SPATEM) messages from traffic lights                  |
 | `/cpm`              | Input   | `v2x_msgs/msg/CPM.msg`      | Receives Collective Perception Messages (CPM) indicating emergencies, parking    |
-| `/decoder_Info`           | Output  | `custom_msg/msg/decoder_Info`      |       Publishes structured decoded V2X data               |
+| `/decoder_Info`           | Output  | `custom_msg/msg/decoder_Info.msg`      |       Publishes structured decoded V2X data               |
                   |
 
 ### Custom messages:
@@ -76,7 +76,7 @@ graph LR
 | `nearby_vehicles`      | `string[]`         | List of detected nearby vehicles (e.g., by ID or label)                        |
 | `nearby_pedestrians`   | `string[]`         | List of detected pedestrians in proximity                                      |
 | `emergency_events`     | `string[]`         | Emergency-related events (e.g., ambulance, fire truck alerts)                  |
-| `traffic_signal_status`| `string`           | Status of the traffic signal (e.g., "red", "green", "yellow")                 |
+| `traffic_signal_status`| `string[]`           | Status of the traffic signal (e.g., "red", "green", "yellow")                 |
 | `parking_slot_ids`     | `string[]`         | Identifiers of available or suggested parking slots                            |
 
 ### Interface test process:
