@@ -13,29 +13,28 @@
 - [License](#-license)
 
 ## 🧠 Description
-The Decoder component processes raw V2X messages and converts them into structured, standardized data for internal use. It extracts critical information such as surrounding vehicle and pedestrian positions, emergency events, traffic signal states, and parking slot identifiers. Decoded data is stored until a complete set (CPM,SPATEM,CAM) is available, ensuring reliable and consistent output for downstream modules.
+The Decoder node interprets incoming SPATEM (Signal Phase and Timing Message) data received from the `/spat` topic, which uses the `etsi_its_spatem_ts_msgs/msg/SPATEM` message type. It processes the message by first extracting the intersection_id and intersection_name, for each intersection it receives the signal_group and for each signal group it receives event_state.These decoded values are organized into a DecoderInfo.msg and published on the `/decoder_info` topic, which uses the `custom_msgs/msg/DecoderInfo` message type.
 
+Functionally, the component acts as a translator between the complex ETSI ITS message hierarchy and the internal ROS 2 data flow. It ensures that only meaningful, ready-to-use traffic signal data is propagated through the system, reducing communication overhead and simplifying further processing. 
 ## 🧩 Architecture
 ```mermaid
 graph LR
     %% Input Topics
-    subgraph Input topics
-        EVSEAL["/cam"]:::grayEllipse
-        MS["/spatem"]:::grayEllipse
-        VCU["/cpm"]:::grayEllipse
+    subgraph Input topic
+        
+        MS["/spat"]:::grayEllipse
+     
     end
 
     %% Component
     EM["decoder"]:::cyanEllipse
 
     %% Connections
-    EVSEAL --> EM
     MS --> EM
-    VCU --> EM
     EM --> DC
 
     %% Output Topics
-    subgraph Output topics
+    subgraph Output topic
         DC["/decoder_info"]:::grayEllipse
     end
 
@@ -48,9 +47,7 @@ graph LR
     classDef grayEllipse fill:#D3D3D3, color:#000000;
 
     %% Apply shapes
-    class EVSEAL soft_rectangle;
     class MS soft_rectangle;
-    class VCU soft_rectangle;
     class DC soft_rectangle;
     class EM component;
 
@@ -62,37 +59,74 @@ graph LR
 ### Topics:
 | Name                         | IO      | Type                 | Description                                                              |
 |------------------------------|---------|----------------------|--------------------------------------------------------------------------|
-| `/cam`        | Input   | `v2x_msgs/msg/CAM.msg`      |   Receives Cooperative Awareness Messages (CAM) with data on nearby vehicles             |
-| `/spatem`         | Input   | `v2x_msgs/msg/SPATEM.msg`      |  Receives Signal Phase and Timing (SPATEM) messages from traffic lights                  |
-| `/cpm`              | Input   | `v2x_msgs/msg/CPM.msg`      | Receives Collective Perception Messages (CPM) indicating emergencies, parking    |
-| `/decoder_Info`           | Output  | `custom_msg/msg/decoder_Info.msg`      |       Publishes structured decoded V2X data               |
+| `/spat`         | Input   | `etsi_its_spatem_ts_msgs/msg/SPATEM.msg`      |  Provides SPATEM (Signal Phase and Timing Message) containing traffic signal information from traffic lights                  |
+| `/decoder_info`           | Output  | `custom_msg/msg/DecoderInfo.msg`      |       Provides simplified decoded traffic signal data, including intersection_id, signal_group, event_state and intersection_name           |
 
 ### Custom messages:
-#### Message: `decoder_Info.msg`
+#### Message: `DecoderInfo.msg`
 | **Name**         | **Type**           | **Description**                                                                 |
 |------------------------|--------------------|---------------------------------------------------------------------------------|
-| `header`               | `std_msgs/Header`  | Standard ROS header with timestamp and frame ID                                |
-| `nearby_vehicles`      | `string[]`         | List of detected nearby vehicles (e.g., by ID or label)                        |
-| `nearby_pedestrians`   | `string[]`         | List of detected pedestrians in proximity                                      |
-| `emergency_events`     | `string[]`         | Emergency-related events (e.g., ambulance, fire truck alerts)                  |
-| `traffic_signal_status`| `string[]`           | Status of the traffic signal (e.g., "red", "green", "yellow")                 |
-| `parking_slot_ids`     | `string[]`         | Identifiers of available or suggested parking slots                            |
+| `intersection_id`      | `int32`         | The unique identifier for the intersection.                     |
+| `signal_group`   | `int32`         | The signal group ID associated with the intersection.                                     |
+| `event_state`     | `int32`         | The event state representing the current signal phase (e.g., RED:3,4,7 and GREEN=5).                  |
+| `intersection_name`| `string`           | The name of the intersection.(e.g. modelcity-intersection-Y, modelcity-intersection-Z)             |
 
 ### Interface test process:
-Will be implemented in next Module.
+Process for testing the above interfaces can be found [here](interface_test.md).
 
 ## 🎯 User Stories
-Will be created in next Module
+[US3.21](https://miro.com/app/board/uXjVI9mh4O0=/?moveToWidget=3458764647567204086&cot=14) : As a decoder, I want to receive SPAT messages and derive traffic signal information, so that I Can forward derived traffic signal information to Traffic Signal Monitor component. 
+
  
 ## 🛠️ Installation
-ROS2 package will be implemented in next Module.
+1. Create workspace, src and go to src
+```bash
+mkdir temp_ws
+cd temp_ws
+mkdir src
+cd src
+```
+2. Clone component repository
+```bash
+git clone https://git.hs-coburg.de/pax_auto/decoder.git
+```
+3. Clone custom messages repository
+```bash
+git clone https://git.hs-coburg.de/pax_auto/custom_msgs.git
+```
+4. Clone etsi_its_messages repository from ika-rwth-aachen
+```bash
+git clone https://github.com/ika-rwth-aachen/etsi_its_messages.git
+```
+5. Clone ad_infrastructure_services repository from Autonomous_Driving
+```bash
+git clone https://git.hs-coburg.de/Autonomous_Driving/ad_infrastructure_services.git
+```
+6. Return to workspace and build the packages
+```bash
+cd ..
+colcon build --packages-select decoder custom_msgs etsi_its_spatem_ts_msgs ad_infrastructure_services
+```
+7. Source the setup files
+```bash
+source install/setup.bash
+```
+
 
 ## ▶️ Usage
-ROS2 package will be implemented in next Module.
+1.Start publishing /spat in modelcity:
+```bash
+ros2 run ad_infrastructure_services spatem_pubsub
+```
+2.Run the decoder node:
+```bash
+ros2 run decoder decoder_node
+```
 
 ## 🧑‍💻 Contributor
-[Mahitha Balachandran Sheeja](https://git.hs-coburg.de/mah5338s)
+[Harsh Mukeshbhai Bhadani](https://git.hs-coburg.de/harshbhadani) 
 
 ## 🔒 License
 Licensed under the **Apache 2.0 License**. See [LICENSE](LICENSE) for details.
+
 
